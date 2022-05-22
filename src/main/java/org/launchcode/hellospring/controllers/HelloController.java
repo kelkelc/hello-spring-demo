@@ -1,51 +1,53 @@
 package org.launchcode.hellospring.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Chris Bay
  */
 @Controller
-@ResponseBody
-@RequestMapping("hello")
 public class HelloController {
 
-    //    // Handle request at path /hello
-//    @GetMapping("hello")
-//    @ResponseBody
-//    public String hello() {
-//        return "Hello, Spring!";
-//    }
-
-    //lives at /hello/goodbye
+    @GetMapping("goodbye")
+    @ResponseBody
     public String goodbye() {
         return "Goodbye, Spring!";
     }
-    //lives at /hello/hello
+
     // Handles requests of the form /hello?name=LaunchCode
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    public String helloWithQueryParam(@RequestParam String name) {
-        return "Hello, " + name + "!";
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST}, value = "hello")
+    public String helloWithQueryParam(@RequestParam String name, Model model) {
+        String theGreeting = "Hello, " + name + "!";
+        model.addAttribute("greeting", theGreeting);
+        return "hello";
     }
 
     // Handles requests of the form /hello/LaunchCode
-    @GetMapping("{name}")
-    public String helloWithPathParam(@PathVariable String name) {
-        return "Hello, " + name + "!";
+    @GetMapping("hello/{name}")
+    public String helloWithPathParam(@PathVariable String name, Model model) {
+        model.addAttribute("greeting", "Hello, " + name + "!");
+        return "hello, " + name + "!";
     }
 
-
+    // /hello/form
     @GetMapping("form")
     public String helloForm() {
-        return "<html>" +
-                "<body>" +
-                "<form action = 'hello' method = 'post'>" + // submit a request to /hello
-                "<input type = 'text' name = 'name' >" +
-                "<input type = 'submit' value = 'Greet Me!' >" +
-                "</form>" +
-                "</body>" +
-                "</html>";
+        return "form";
+    }
+
+    @GetMapping("hello-names")
+    public String helloNames(Model model) {
+        List<String> theNames = new ArrayList<>();
+        theNames.add("LaunchCode");
+        theNames.add("Java");
+        theNames.add("JavaScript");
+        model.addAttribute("names", theNames);
+        return "hello-list";
     }
 
 }
